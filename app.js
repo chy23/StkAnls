@@ -3168,3 +3168,48 @@ function setupMacroTabs() {
     });
   });
 }
+
+// Changelog Logic
+document.addEventListener('DOMContentLoaded', () => {
+  const changelogBtn = document.getElementById('changelog-btn');
+  const changelogModal = document.getElementById('changelog-modal');
+  const closeChangelogBtn = document.getElementById('close-changelog-btn');
+  const changelogList = document.getElementById('changelog-list');
+
+  if (changelogBtn && changelogModal && closeChangelogBtn && changelogList && typeof changelogData !== 'undefined') {
+    // Render changelog data
+    let html = '';
+    changelogData.forEach(item => {
+      html += `
+        <div class="changelog-item">
+          <div class="changelog-title">${item.title}</div>
+          <div class="changelog-meta">
+            <span style="background: rgba(59,130,246,0.2); padding: 2px 8px; border-radius: 4px; color: #93c5fd;">${item.version}</span>
+            <span>📅 ${item.date}</span>
+          </div>
+          <div class="changelog-body">
+            <div style="margin-bottom: 0.5rem;"><strong>📝 更新細節：</strong>${item.details}</div>
+            <div><strong style="color: var(--danger-color);">🐛 Bug 修正：</strong>${item.bugFixes}</div>
+          </div>
+        </div>
+      `;
+    });
+    changelogList.innerHTML = html;
+
+    // Event listeners
+    changelogBtn.addEventListener('click', () => {
+      changelogModal.style.display = 'flex';
+    });
+
+    closeChangelogBtn.addEventListener('click', () => {
+      changelogModal.style.display = 'none';
+    });
+
+    changelogModal.addEventListener('click', (e) => {
+      if (e.target === changelogModal) {
+        changelogModal.style.display = 'none';
+      }
+    });
+  }
+});
+
