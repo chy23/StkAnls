@@ -3178,36 +3178,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (changelogBtn && changelogModal && closeChangelogBtn && changelogList && typeof changelogData !== 'undefined') {
     // Render changelog data
-    let html = '';
+    let html = '<div class="timeline-container" style="padding-left: 20px; position: relative;">';
+    html += '<div style="position: absolute; top: 0; bottom: 0; left: 8px; width: 2px; background: rgba(255,255,255,0.1);"></div>';
+    
     changelogData.forEach(item => {
+      const hasBugs = item.bugFixes !== '無' && item.bugFixes !== '';
+      
       html += `
-        <div class="changelog-item">
-          <div class="changelog-title">${item.title}</div>
-          <div class="changelog-meta">
-            <span style="background: rgba(59,130,246,0.2); padding: 2px 8px; border-radius: 4px; color: #93c5fd;">${item.version}</span>
-            <span>📅 ${item.date}</span>
+        <div class="changelog-item fade-in" style="position: relative; padding-left: 1.5rem; margin-bottom: 2rem;">
+          <!-- Timeline Dot -->
+          <div style="position: absolute; left: -16px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-hover); box-shadow: 0 0 10px var(--accent-hover);"></div>
+          
+          <div class="changelog-meta" style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+            <span style="font-size: 0.8rem; font-weight: 600; background: rgba(59,130,246,0.15); color: #93c5fd; padding: 2px 8px; border-radius: 12px; border: 1px solid rgba(59,130,246,0.3);">${item.version}</span>
+            <span style="font-size: 0.8rem; color: var(--text-secondary);">📅 ${item.date}</span>
           </div>
-          <div class="changelog-body">
-            <div style="margin-bottom: 0.5rem;"><strong>📝 更新細節：</strong>${item.details}</div>
-            <div><strong style="color: var(--danger-color);">🐛 Bug 修正：</strong>${item.bugFixes}</div>
+          
+          <div class="changelog-title" style="font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 12px; letter-spacing: 0.5px;">${item.title}</div>
+          
+          <div class="changelog-body" style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary); background: rgba(0,0,0,0.25); padding: 1.25rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease;">
+            <div style="margin-bottom: ${hasBugs ? '1rem' : '0'};">
+              <span style="color: white; font-weight: 600; display: block; margin-bottom: 4px; font-size: 0.9rem;">📝 更新細節</span>
+              ${item.details}
+            </div>
+            ${hasBugs ? `
+            <div style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 1rem;">
+              <span style="color: var(--danger-color); font-weight: 600; display: block; margin-bottom: 4px; font-size: 0.9rem;">🐛 Bug 修正</span>
+              ${item.bugFixes}
+            </div>
+            ` : ''}
           </div>
         </div>
       `;
     });
+    html += '</div>';
     changelogList.innerHTML = html;
 
-    // Event listeners
+    // Smooth modal transitions
+    changelogModal.style.opacity = '0';
+    changelogModal.style.transition = 'opacity 0.3s ease';
+
     changelogBtn.addEventListener('click', () => {
       changelogModal.style.display = 'flex';
+      setTimeout(() => { changelogModal.style.opacity = '1'; }, 10);
     });
 
-    closeChangelogBtn.addEventListener('click', () => {
-      changelogModal.style.display = 'none';
-    });
+    const closeModal = () => {
+      changelogModal.style.opacity = '0';
+      setTimeout(() => { changelogModal.style.display = 'none'; }, 300);
+    };
+
+    closeChangelogBtn.addEventListener('click', closeModal);
 
     changelogModal.addEventListener('click', (e) => {
       if (e.target === changelogModal) {
-        changelogModal.style.display = 'none';
+        closeModal();
       }
     });
   }

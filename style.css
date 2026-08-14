@@ -309,32 +309,27 @@ tr:hover {
   animation: fadeIn 0.3s ease-out;
 }
 
-.changelog-item {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+
+/* Custom Scrollbar for Modal */
+#changelog-list::-webkit-scrollbar {
+  width: 6px;
 }
-.changelog-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
+#changelog-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
-.changelog-title {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
+#changelog-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
 }
-.changelog-meta {
-  font-size: 0.85rem;
-  color: var(--accent-hover);
-  margin-bottom: 0.5rem;
-  display: flex;
-  gap: 1rem;
+#changelog-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
-.changelog-body {
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  line-height: 1.5;
+
+/* Modal Content Transition */
+.modal-content {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(15, 23, 42, 0.85); /* Darker backdrop for modal */
 }
 
