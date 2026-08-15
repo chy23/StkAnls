@@ -1796,13 +1796,46 @@ window.TW_NAMES = {
 };
 
 const US_CATEGORY_MAP = {
+  // 科技與軟體 (Tech & Software)
   "科技巨頭 (Big Tech)": ["AAPL", "MSFT", "GOOGL", "AMZN", "META"],
-  "半導體 (Semiconductors)": ["NVDA", "AMD", "TSM", "AVGO", "INTC", "QCOM", "ASML", "MU", "TXN", "AMAT"],
-  "電動車與能源 (EV & Energy)": ["TSLA", "XOM", "CVX"],
-  "金融與支付 (Financials)": ["JPM", "BAC", "V", "MA", "AXP"],
-  "醫療生技 (Healthcare)": ["UNH", "JNJ", "LLY", "ABBV", "MRK", "PFE"],
-  "消費品 (Consumer)": ["WMT", "PG", "KO", "PEP", "COST", "MCD", "NKE"],
-  "工業與軍工 (Industrials)": ["BA", "CAT", "LMT", "RTX", "HON"]
+  "半導體與設備 (Semiconductors)": ["NVDA", "AMD", "TSM", "AVGO", "INTC", "QCOM", "ASML", "MU", "TXN", "AMAT", "ARM", "LRCX", "KLAC", "SNPS", "CDNS"],
+  "雲端軟體與 SaaS (Cloud Software)": ["CRM", "ADBE", "NOW", "INTU", "WDAY", "SNOW", "PLTR", "DDOG", "TEAM", "MNDY", "NET", "CRWD", "PANW", "FTNT", "ZS"],
+  "硬體與設備 (Hardware & Equip)": ["CSCO", "HPQ", "HPE", "DELL", "SMCI", "ANET", "MSI", "STX", "WDC"],
+  
+  // 消費與零售 (Consumer & Retail)
+  "電子商務與平台 (E-Commerce)": ["AMZN", "BABA", "MELI", "SE", "EBAY", "ETSY", "SHOP", "PDD", "CPNG"],
+  "實體零售巨頭 (Retail)": ["WMT", "TGT", "COST", "HD", "LOW", "DG", "DLTR", "TJX", "ROST"],
+  "日常消費品 (Consumer Staples)": ["PG", "KO", "PEP", "PM", "MO", "CL", "KMB", "GIS", "K", "MDLZ"],
+  "餐飲與休閒連鎖 (Restaurants)": ["MCD", "SBUX", "CMG", "YUM", "DPZ", "DRI", "TXRH", "WING"],
+  "媒體與娛樂 (Media)": ["NFLX", "DIS", "WBD", "CMCSA", "SPOT", "LYV", "EA", "TTWO", "ROKU"],
+  "汽車與電動車 (Automotive & EV)": ["TSLA", "F", "GM", "TM", "HMC", "RIVN", "LCID", "LI", "XPEV"],
+  
+  // 金融與不動產 (Financials & Real Estate)
+  "大型銀行 (Major Banks)": ["JPM", "BAC", "WFC", "C", "MS", "GS", "SCHW", "USB", "PNC"],
+  "支付與金融科技 (Fintech)": ["V", "MA", "AXP", "PYPL", "SQ", "AFRM", "SOFI", "COIN", "UPST"],
+  "保險與資產管理 (Insurance & AM)": ["BRK-B", "BLK", "BX", "PGR", "CB", "MMC", "AON", "MET", "PRU"],
+  "不動產信託 (REITs)": ["PLD", "AMT", "EQIX", "PSA", "SPG", "O", "WELL", "CCI", "DLR", "AVB"],
+  
+  // 醫療與生技 (Healthcare & Biotech)
+  "大型製藥 (Pharmaceuticals)": ["LLY", "JNJ", "MRK", "ABBV", "PFE", "NVO", "BMY", "AZN", "NVS", "GSK"],
+  "生技新創 (Biotechnology)": ["VRTX", "REGN", "AMGN", "GILD", "BIIB", "MRNA", "BNTX", "CRSP"],
+  "醫療設備與儀器 (Medical Devices)": ["ABT", "MDT", "SYK", "BSX", "ISRG", "EW", "ZBH", "BDX", "A", "TMO"],
+  "健康保險與服務 (Healthcare Svcs)": ["UNH", "ELV", "CVS", "CI", "HUM", "MCK", "CAH", "COR", "CNC"],
+  
+  // 工業與材料 (Industrials & Materials)
+  "航太與軍工 (Aerospace & Defense)": ["LMT", "RTX", "GD", "NOC", "BA", "HWM", "TDG", "LHX", "HEI"],
+  "交通運輸與物流 (Transport & Logistics)": ["UPS", "FDX", "UNP", "CSX", "NSC", "ODFL", "DAL", "UAL", "LUV", "EXPD"],
+  "機械與重工業 (Machinery)": ["CAT", "DE", "HON", "GE", "EMR", "ETN", "PCAR", "CMI", "ROK", "IR"],
+  "基礎材料與化學 (Materials & Chem)": ["LIN", "SHW", "APD", "DD", "ECL", "NEM", "FCX", "NUE", "ALB", "SQM"],
+  
+  // 能源與公用事業 (Energy & Utilities)
+  "傳統石油與天然氣 (Oil & Gas)": ["XOM", "CVX", "COP", "EOG", "SLB", "HAL", "OXY", "MPC", "PSX", "VLO"],
+  "乾淨能源與儲能 (Clean Energy)": ["ENPH", "FSLR", "PLUG", "RUN", "SEDG", "BE", "CWEN", "NEP"],
+  "公用事業 (Utilities)": ["NEE", "SO", "DUK", "SRE", "AEP", "D", "EXC", "XEL", "ED", "PEG"],
+
+  // 特殊概念題材 (Special Themes)
+  "比特幣與加密資產 (Crypto Concepts)": ["MSTR", "COIN", "MARA", "RIOT", "CLSK", "HUT", "IBIT", "FBTC"],
+  "AI 機器人與自動化 (AI Robotics)": ["PATH", "SYM", "CGNX", "TER", "ISRG", "U"]
 };
 
 const OTHER_CATEGORY_MAP = {
