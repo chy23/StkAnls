@@ -317,7 +317,7 @@ async function renderStockCards() {
     return;
   }
   
-  const skeletonCard = \`
+  const skeletonCard = `
     <div class="glass-panel stock-card skeleton-card" style="padding: 1.5rem; display: flex; flex-direction: column;">
       <div class="skeleton skeleton-row w-50" style="height: 24px;"></div>
       <div class="skeleton skeleton-row w-75" style="margin-top: 1.5rem;"></div>
@@ -325,7 +325,7 @@ async function renderStockCards() {
       <div class="skeleton skeleton-row" style="margin-top: 1rem;"></div>
       <div class="skeleton skeleton-row" style="margin-top: auto; height: 50px;"></div>
     </div>
-  \`;
+  `;
   container.innerHTML = Array(Math.min(filteredStocks.length, 6)).fill(skeletonCard).join('');
   
   try {
@@ -437,22 +437,22 @@ async function renderStockCards() {
                 if (percent <= 50) dotColor = '#10b981'; // Green (sweet spot)
                 else if (percent <= 75) dotColor = '#eab308'; // Yellow (neutral)
 
-                return \`
+                return `
                   <div style="margin-top: 12px; padding: 0 4px;">
                     <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight: 600;">
-                      <span style="color: \${percent <= 50 ? '#10b981' : ''}">便宜</span>
-                      <span style="color: \${percent > 50 && percent <= 75 ? '#eab308' : ''}">合理</span>
-                      <span style="color: \${percent > 75 ? '#ef4444' : ''}">昂貴</span>
+                      <span style="color: ${percent <= 50 ? '#10b981' : ''}">便宜</span>
+                      <span style="color: ${percent > 50 && percent <= 75 ? '#eab308' : ''}">合理</span>
+                      <span style="color: ${percent > 75 ? '#ef4444' : ''}">昂貴</span>
                     </div>
                     <div style="position: relative; height: 6px; background: linear-gradient(to right, rgba(16,185,129,0.2) 0%, rgba(16,185,129,0.2) 49%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 74%, rgba(239,68,68,0.2) 75%, rgba(239,68,68,0.2) 100%); border-radius: 3px;">
                       <div style="position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; background: rgba(255,255,255,0.3);"></div>
                       <div style="position: absolute; left: 75%; top: -3px; bottom: -3px; width: 2px; background: rgba(255,255,255,0.3);"></div>
                       
                       <!-- Current Price Marker -->
-                      <div style="position: absolute; left: \${percent}%; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; background: \${dotColor}; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px \${dotColor}; transition: left 1s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                      <div style="position: absolute; left: ${percent}%; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; background: ${dotColor}; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px ${dotColor}; transition: left 1s cubic-bezier(0.4, 0, 0.2, 1);"></div>
                     </div>
                   </div>
-                \`;
+                `;
               }
               return '';
             })()}
@@ -2821,7 +2821,7 @@ const CATEGORY_MAP = {
     searchBtn.disabled = true;
     searchBtn.innerHTML = '<span class="loading" style="display:inline-block;">🔄</span> 載入中...';
     searchResultsSection.style.display = 'block';
-    const skeletonCard = \`
+    const skeletonCard = `
       <div class="glass-panel stock-card skeleton-card" style="padding: 1.5rem; display: flex; flex-direction: column;">
         <div class="skeleton skeleton-row w-50" style="height: 24px;"></div>
         <div class="skeleton skeleton-row w-75" style="margin-top: 1.5rem;"></div>
@@ -2829,7 +2829,7 @@ const CATEGORY_MAP = {
         <div class="skeleton skeleton-row" style="margin-top: 1rem;"></div>
         <div class="skeleton skeleton-row" style="margin-top: auto; height: 50px;"></div>
       </div>
-    \`;
+    `;
     searchResultsContainer.innerHTML = Array(6).fill(skeletonCard).join('');
     
     try {
@@ -2930,20 +2930,20 @@ const CATEGORY_MAP = {
                         if (percent <= 50) dotColor = '#10b981'; 
                         else if (percent <= 75) dotColor = '#eab308'; 
 
-                        return \`
+                        return `
                           <div style="margin-top: 12px; padding: 0 4px;">
                             <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight: 600;">
-                              <span style="color: \${percent <= 50 ? '#10b981' : ''}">便宜</span>
-                              <span style="color: \${percent > 50 && percent <= 75 ? '#eab308' : ''}">合理</span>
-                              <span style="color: \${percent > 75 ? '#ef4444' : ''}">昂貴</span>
+                              <span style="color: ${percent <= 50 ? '#10b981' : ''}">便宜</span>
+                              <span style="color: ${percent > 50 && percent <= 75 ? '#eab308' : ''}">合理</span>
+                              <span style="color: ${percent > 75 ? '#ef4444' : ''}">昂貴</span>
                             </div>
                             <div style="position: relative; height: 6px; background: linear-gradient(to right, rgba(16,185,129,0.2) 0%, rgba(16,185,129,0.2) 49%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 74%, rgba(239,68,68,0.2) 75%, rgba(239,68,68,0.2) 100%); border-radius: 3px;">
                               <div style="position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; background: rgba(255,255,255,0.3);"></div>
                               <div style="position: absolute; left: 75%; top: -3px; bottom: -3px; width: 2px; background: rgba(255,255,255,0.3);"></div>
-                              <div style="position: absolute; left: \${percent}%; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; background: \${dotColor}; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px \${dotColor}; transition: left 1s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                              <div style="position: absolute; left: ${percent}%; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; background: ${dotColor}; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px ${dotColor}; transition: left 1s cubic-bezier(0.4, 0, 0.2, 1);"></div>
                             </div>
                           </div>
-                        \`;
+                        `;
                       }
                       return '';
                     })()}
@@ -3043,20 +3043,20 @@ const CATEGORY_MAP = {
                       if (percent <= 50) dotColor = '#10b981'; 
                       else if (percent <= 75) dotColor = '#eab308'; 
 
-                      return \`
+                      return `
                         <div style="margin-top: 12px; padding: 0 4px;">
                           <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight: 600;">
-                            <span style="color: \${percent <= 50 ? '#10b981' : ''}">便宜</span>
-                            <span style="color: \${percent > 50 && percent <= 75 ? '#eab308' : ''}">合理</span>
-                            <span style="color: \${percent > 75 ? '#ef4444' : ''}">昂貴</span>
+                            <span style="color: ${percent <= 50 ? '#10b981' : ''}">便宜</span>
+                            <span style="color: ${percent > 50 && percent <= 75 ? '#eab308' : ''}">合理</span>
+                            <span style="color: ${percent > 75 ? '#ef4444' : ''}">昂貴</span>
                           </div>
                           <div style="position: relative; height: 6px; background: linear-gradient(to right, rgba(16,185,129,0.2) 0%, rgba(16,185,129,0.2) 49%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 74%, rgba(239,68,68,0.2) 75%, rgba(239,68,68,0.2) 100%); border-radius: 3px;">
                             <div style="position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; background: rgba(255,255,255,0.3);"></div>
                             <div style="position: absolute; left: 75%; top: -3px; bottom: -3px; width: 2px; background: rgba(255,255,255,0.3);"></div>
-                            <div style="position: absolute; left: \${percent}%; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; background: \${dotColor}; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px \${dotColor}; transition: left 1s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                            <div style="position: absolute; left: ${percent}%; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; background: ${dotColor}; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px ${dotColor}; transition: left 1s cubic-bezier(0.4, 0, 0.2, 1);"></div>
                           </div>
                         </div>
-                      \`;
+                      `;
                     }
                     return '';
                   })()}
