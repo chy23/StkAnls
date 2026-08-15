@@ -1,5 +1,12 @@
 const changelogData = [
   {
+    version: "v37",
+    date: "2026-08-15",
+    title: "五大頂級 UI/UX 視覺體驗升級",
+    details: "1. 恐懼與貪婪指數升級為【半圓形動態儀表板】。<br/>2. 估值甜蜜點卡片新增【水平區間進度條】，視覺化判斷便宜或昂貴。<br/>3. 【凍結 (Sticky) 控制列與表格首欄】，大幅提升滑動時的操作體驗。<br/>4. 頁首結合專屬 AI 生成的 QuantVision 品牌 Logo。<br/>5. 導入現代化的【骨架屏 (Skeleton)】載入動畫，告別枯燥的等待文字。",
+    bugFixes: "無"
+  },
+  {
     version: "v34",
     date: "2026-07-24",
     title: "新增絕對漲跌金額顯示",

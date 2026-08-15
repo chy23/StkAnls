@@ -317,7 +317,16 @@ async function renderStockCards() {
     return;
   }
   
-  container.innerHTML = '<div style="text-align: center; width: 100%; color: var(--text-secondary);"><span class="loading" style="display:inline-block;">🔄</span> 正在連線雲端引擎獲取動態估值...</div>';
+  const skeletonCard = \`
+    <div class="glass-panel stock-card skeleton-card" style="padding: 1.5rem; display: flex; flex-direction: column;">
+      <div class="skeleton skeleton-row w-50" style="height: 24px;"></div>
+      <div class="skeleton skeleton-row w-75" style="margin-top: 1.5rem;"></div>
+      <div class="skeleton skeleton-row" style="margin-top: 1rem;"></div>
+      <div class="skeleton skeleton-row" style="margin-top: 1rem;"></div>
+      <div class="skeleton skeleton-row" style="margin-top: auto; height: 50px;"></div>
+    </div>
+  \`;
+  container.innerHTML = Array(Math.min(filteredStocks.length, 6)).fill(skeletonCard).join('');
   
   try {
     // Batch fetching to prevent Render 30s timeout on 50 symbols
@@ -405,8 +414,48 @@ async function renderStockCards() {
           </div>
           
           <div class="mt-2 pt-2 border-t border-gray-700/50" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <div class="text-sm text-gray-400">建議買入價 (甜蜜點)</div>
-            <div class="buy-price">${sweetSpot}</div>
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <div class="text-sm text-gray-400">建議買入價 (甜蜜點)</div>
+              <div class="buy-price" style="margin-top: 0;">${sweetSpot}</div>
+            </div>
+            
+            ${(function() {
+              const buyStr = sweetSpot.replace(/[^\\d.]/g, '');
+              const buyNum = parseFloat(buyStr);
+              const curNum = live && live.currentPrice !== 'N/A' ? parseFloat(live.currentPrice.toString().replace(/,/g, '')) : NaN;
+              
+              if (!isNaN(buyNum) && !isNaN(curNum) && buyNum > 0) {
+                let percent = 50;
+                if (curNum <= buyNum) {
+                  percent = (curNum / buyNum) * 50;
+                } else {
+                  percent = 50 + ((curNum - buyNum) / (buyNum * 0.3)) * 50;
+                }
+                percent = Math.max(5, Math.min(95, percent)); // clamp for visual
+                
+                let dotColor = '#ef4444'; // Red (overvalued)
+                if (percent <= 50) dotColor = '#10b981'; // Green (sweet spot)
+                else if (percent <= 75) dotColor = '#eab308'; // Yellow (neutral)
+
+                return \`
+                  <div style="margin-top: 12px; padding: 0 4px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight: 600;">
+                      <span style="color: \${percent <= 50 ? '#10b981' : ''}">便宜</span>
+                      <span style="color: \${percent > 50 && percent <= 75 ? '#eab308' : ''}">合理</span>
+                      <span style="color: \${percent > 75 ? '#ef4444' : ''}">昂貴</span>
+                    </div>
+                    <div style="position: relative; height: 6px; background: linear-gradient(to right, rgba(16,185,129,0.2) 0%, rgba(16,185,129,0.2) 49%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 74%, rgba(239,68,68,0.2) 75%, rgba(239,68,68,0.2) 100%); border-radius: 3px;">
+                      <div style="position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; background: rgba(255,255,255,0.3);"></div>
+                      <div style="position: absolute; left: 75%; top: -3px; bottom: -3px; width: 2px; background: rgba(255,255,255,0.3);"></div>
+                      
+                      <!-- Current Price Marker -->
+                      <div style="position: absolute; left: \${percent}%; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; background: \${dotColor}; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px \${dotColor}; transition: left 1s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                    </div>
+                  </div>
+                \`;
+              }
+              return '';
+            })()}
           </div>
           
           <div class="logic-text">
@@ -2772,7 +2821,16 @@ const CATEGORY_MAP = {
     searchBtn.disabled = true;
     searchBtn.innerHTML = '<span class="loading" style="display:inline-block;">🔄</span> 載入中...';
     searchResultsSection.style.display = 'block';
-    searchResultsContainer.innerHTML = '<div style="color: var(--text-secondary); grid-column: 1 / -1; text-align: center;">準備分批載入全市場深度資料...</div>';
+    const skeletonCard = \`
+      <div class="glass-panel stock-card skeleton-card" style="padding: 1.5rem; display: flex; flex-direction: column;">
+        <div class="skeleton skeleton-row w-50" style="height: 24px;"></div>
+        <div class="skeleton skeleton-row w-75" style="margin-top: 1.5rem;"></div>
+        <div class="skeleton skeleton-row" style="margin-top: 1rem;"></div>
+        <div class="skeleton skeleton-row" style="margin-top: 1rem;"></div>
+        <div class="skeleton skeleton-row" style="margin-top: auto; height: 50px;"></div>
+      </div>
+    \`;
+    searchResultsContainer.innerHTML = Array(6).fill(skeletonCard).join('');
     
     try {
       let mapToUse = CATEGORY_MAP;
@@ -2849,8 +2907,46 @@ const CATEGORY_MAP = {
                   </div>
                   
                   <div class="mt-2 pt-2 border-t border-gray-700/50" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    <div class="text-sm text-gray-400">建議買入價 (甜蜜點)</div>
-                    <div class="buy-price">${stock.sweetSpot}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                      <div class="text-sm text-gray-400">建議買入價 (甜蜜點)</div>
+                      <div class="buy-price" style="margin-top: 0;">${stock.sweetSpot}</div>
+                    </div>
+                    
+                    ${(function() {
+                      const buyStr = stock.sweetSpot.toString().replace(/[^\\d.]/g, '');
+                      const buyNum = parseFloat(buyStr);
+                      const curNum = parseFloat(stock.currentPrice.toString().replace(/,/g, ''));
+                      
+                      if (!isNaN(buyNum) && !isNaN(curNum) && buyNum > 0) {
+                        let percent = 50;
+                        if (curNum <= buyNum) {
+                          percent = (curNum / buyNum) * 50;
+                        } else {
+                          percent = 50 + ((curNum - buyNum) / (buyNum * 0.3)) * 50;
+                        }
+                        percent = Math.max(5, Math.min(95, percent)); 
+                        
+                        let dotColor = '#ef4444'; 
+                        if (percent <= 50) dotColor = '#10b981'; 
+                        else if (percent <= 75) dotColor = '#eab308'; 
+
+                        return \`
+                          <div style="margin-top: 12px; padding: 0 4px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight: 600;">
+                              <span style="color: \${percent <= 50 ? '#10b981' : ''}">便宜</span>
+                              <span style="color: \${percent > 50 && percent <= 75 ? '#eab308' : ''}">合理</span>
+                              <span style="color: \${percent > 75 ? '#ef4444' : ''}">昂貴</span>
+                            </div>
+                            <div style="position: relative; height: 6px; background: linear-gradient(to right, rgba(16,185,129,0.2) 0%, rgba(16,185,129,0.2) 49%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 74%, rgba(239,68,68,0.2) 75%, rgba(239,68,68,0.2) 100%); border-radius: 3px;">
+                              <div style="position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; background: rgba(255,255,255,0.3);"></div>
+                              <div style="position: absolute; left: 75%; top: -3px; bottom: -3px; width: 2px; background: rgba(255,255,255,0.3);"></div>
+                              <div style="position: absolute; left: \${percent}%; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; background: \${dotColor}; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px \${dotColor}; transition: left 1s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                            </div>
+                          </div>
+                        \`;
+                      }
+                      return '';
+                    })()}
                   </div>
                   
                   <div class="logic-text">
@@ -2924,8 +3020,46 @@ const CATEGORY_MAP = {
                 </div>
                 
                 <div class="mt-2 pt-2 border-t border-gray-700/50" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
-                  <div class="text-sm text-gray-400">建議買入價 (甜蜜點)</div>
-                  <div class="buy-price">${stock.sweetSpot}</div>
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <div class="text-sm text-gray-400">建議買入價 (甜蜜點)</div>
+                    <div class="buy-price" style="margin-top: 0;">${stock.sweetSpot}</div>
+                  </div>
+                  
+                  ${(function() {
+                    const buyStr = stock.sweetSpot.toString().replace(/[^\\d.]/g, '');
+                    const buyNum = parseFloat(buyStr);
+                    const curNum = parseFloat(stock.currentPrice.toString().replace(/,/g, ''));
+                    
+                    if (!isNaN(buyNum) && !isNaN(curNum) && buyNum > 0) {
+                      let percent = 50;
+                      if (curNum <= buyNum) {
+                        percent = (curNum / buyNum) * 50;
+                      } else {
+                        percent = 50 + ((curNum - buyNum) / (buyNum * 0.3)) * 50;
+                      }
+                      percent = Math.max(5, Math.min(95, percent)); 
+                      
+                      let dotColor = '#ef4444'; 
+                      if (percent <= 50) dotColor = '#10b981'; 
+                      else if (percent <= 75) dotColor = '#eab308'; 
+
+                      return \`
+                        <div style="margin-top: 12px; padding: 0 4px;">
+                          <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight: 600;">
+                            <span style="color: \${percent <= 50 ? '#10b981' : ''}">便宜</span>
+                            <span style="color: \${percent > 50 && percent <= 75 ? '#eab308' : ''}">合理</span>
+                            <span style="color: \${percent > 75 ? '#ef4444' : ''}">昂貴</span>
+                          </div>
+                          <div style="position: relative; height: 6px; background: linear-gradient(to right, rgba(16,185,129,0.2) 0%, rgba(16,185,129,0.2) 49%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 74%, rgba(239,68,68,0.2) 75%, rgba(239,68,68,0.2) 100%); border-radius: 3px;">
+                            <div style="position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; background: rgba(255,255,255,0.3);"></div>
+                            <div style="position: absolute; left: 75%; top: -3px; bottom: -3px; width: 2px; background: rgba(255,255,255,0.3);"></div>
+                            <div style="position: absolute; left: \${percent}%; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; background: \${dotColor}; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px \${dotColor}; transition: left 1s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                          </div>
+                        </div>
+                      \`;
+                    }
+                    return '';
+                  })()}
                 </div>
                 
                 <div class="logic-text">
@@ -3133,6 +3267,18 @@ async function loadMacroDashboard() {
         greedRating.style.color = color;
         greedRating.style.background = bg;
         if (greedDesc) greedDesc.innerText = desc;
+
+        // Animate SVG Gauge
+        const gaugePath = document.getElementById('macro-greed-gauge-path');
+        if (gaugePath) {
+          gaugePath.style.stroke = color;
+          // dasharray is 125.66. offset = 125.66 * (1 - score/100)
+          const offset = 125.66 * (1 - fgData.greed_score / 100);
+          // Trigger animation after a slight delay
+          setTimeout(() => {
+            gaugePath.style.strokeDashoffset = offset;
+          }, 100);
+        }
       } else {
         greedVal.innerText = '暫無';
         greedRating.innerText = '--';

@@ -333,3 +333,59 @@ tr:hover {
   background: rgba(15, 23, 42, 0.85); /* Darker backdrop for modal */
 }
 
+
+/* Sticky Controls */
+.sticky-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 2rem;
+}
+
+/* Sticky Table Column */
+.table-container {
+  overflow-x: auto;
+  position: relative;
+}
+table th:first-child,
+table td:first-child {
+  position: sticky;
+  left: 0;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+  border-right: 1px solid var(--card-border);
+  box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+}
+
+
+/* Skeleton Loader */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.skeleton {
+  background: #1e293b;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.05) 20%, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0));
+  background-repeat: no-repeat;
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+  border-radius: 8px;
+}
+.skeleton-card {
+  height: 320px;
+  width: 100%;
+}
+.skeleton-row {
+  height: 20px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.skeleton-row.w-50 { width: 50%; }
+.skeleton-row.w-75 { width: 75%; }
+
