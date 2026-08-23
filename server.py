@@ -1900,6 +1900,52 @@ def get_macro_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+TW_WEIGHT_MULTIPLIERS = {
+    "2330.TW": 8.2,
+    "2317.TW": 4.4,
+    "2454.TW": 5.1,
+    "2382.TW": 1.2,
+    "2881.TW": 4.1,
+    "2308.TW": 0.8,
+    "2882.TW": 4.8,
+    "2412.TW": 2.5,
+    "2891.TW": 6.5,
+    "3711.TW": 1.4,
+    "2886.TW": 4.4,
+    "1303.TW": 2.4,
+    "1301.TW": 1.9,
+    "2002.TW": 4.8,
+    "2357.TW": 0.2
+}
+
+@app.route('/api/index-contributors', methods=['GET'])
+def get_index_contributors():
+    results = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        symbols = list(TW_WEIGHT_MULTIPLIERS.keys())
+        futures = {executor.submit(fetch_stock_data, sym, False): sym for sym in symbols}
+        
+        for future in concurrent.futures.as_completed(futures):
+            sym = futures[future]
+            data = future.result()
+            if data and data.get('change') is not None:
+                change = data['change']
+                multiplier = TW_WEIGHT_MULTIPLIERS[sym]
+                contribution = round(change * multiplier, 1)
+                
+                results.append({
+                    "symbol": sym.replace('.TW', ''),
+                    "name": SYMBOL_NAMES.get(sym, sym),
+                    "currentPrice": data['currentPrice'],
+                    "change": change,
+                    "changePercent": data['changePercent'],
+                    "contribution": contribution
+                })
+    
+    # Sort by absolute contribution (highest impact first)
+    results.sort(key=lambda x: abs(x['contribution']), reverse=True)
+    return jsonify(results)
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5002))
     app.run(host='0.0.0.0', port=port, debug=False, threaded=True)

@@ -3198,10 +3198,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadMarketOverview();
   renderStockCards();
+  loadIndexContributors();
   loadRecommendations();
   setupTabs();
 });
 
+async function loadIndexContributors() {
+  const container = document.getElementById('index-contributors-container');
+  if (!container) return;
+  
+  container.innerHTML = `
+    <div class="col-span-full flex flex-col items-center justify-center p-8 text-gray-400">
+      <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p>即時計算台股大盤權重中...</p>
+    </div>
+  `;
+
+  try {
+    const response = await fetchWithRetry(`${API_BASE_URL}/api/index-contributors`);
+    if (!response.ok) throw new Error('Network response was not ok');
+    const data = await response.json();
+    
+    let html = '';
+    data.forEach(stock => {
+      const isPositive = stock.contribution > 0;
+      const isNegative = stock.contribution < 0;
+      const highlightStyle = isPositive ? 'border: 1px solid var(--success-color);' : (isNegative ? 'border: 1px solid var(--danger-color);' : 'border: 1px solid rgba(255,255,255,0.1);');
+      const badgeHTML = isPositive 
+        ? '<div style="position: absolute; top: -10px; right: -10px; background: var(--success-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">🔥 撐盤</div>' 
+        : (isNegative ? '<div style="position: absolute; top: -10px; right: -10px; background: var(--danger-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">🧊 拖累</div>' : '');
+      
+      const linkURL = `https://tw.stock.yahoo.com/quote/${stock.symbol}`;
+      
+      let sign = stock.contribution > 0 ? '+' : '';
+      let colorClass = stock.contribution > 0 ? 'text-green-500' : (stock.contribution < 0 ? 'text-red-500' : 'text-gray-400');
+      
+      html += `
+        <div class="glass-panel stock-card fade-in" style="position: relative; ${highlightStyle}">
+          ${badgeHTML}
+          <div class="stock-header">
+            <div>
+              <div class="stock-symbol"><a href="${linkURL}" target="_blank" style="color: inherit; text-decoration: none;">${stock.symbol}</a></div>
+              <div class="stock-name">${stock.name}</div>
+            </div>
+            <div class="${colorClass}" style="font-weight: bold; font-size: 1.1rem; text-align: right;">
+              ${sign}${stock.contribution} 點
+            </div>
+          </div>
+          
+          <div class="mt-2 pt-2 border-t border-gray-700/50" style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="text-sm text-gray-400">目前股價</div>
+            <div style="font-weight: 500;">${stock.currentPrice}</div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px;">
+            <div class="text-sm text-gray-400">今日漲跌幅</div>
+            <div class="${stock.changePercent > 0 ? 'text-green-500' : (stock.changePercent < 0 ? 'text-red-500' : 'text-gray-400')}">${stock.changePercent > 0 ? '+' : ''}${stock.changePercent}%</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    container.innerHTML = html;
+  } catch (error) {
+    console.error('Error loading index contributors:', error);
+    container.innerHTML = `<div class="col-span-full p-4 text-red-400 bg-red-900/20 rounded">無法載入大盤貢獻資料，請稍後再試。</div>`;
+  }
+}
 
 // Load Market Overview Ticker
 async function loadMarketOverview() {
