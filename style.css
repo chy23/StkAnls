@@ -191,6 +191,15 @@ th, td {
   border-bottom: 1px solid var(--card-border);
 }
 
+table th {
+  position: sticky;
+  top: 0;
+  background: var(--card-bg);
+  z-index: 20;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 var(--card-border);
+}
+
 th {
   color: var(--text-secondary);
   font-weight: 600;
@@ -358,6 +367,13 @@ table td:first-child {
   background: var(--card-bg);
   backdrop-filter: blur(12px);
   z-index: 10;
+}
+table th:first-child {
+  z-index: 30;
+}
+table th:first-child {
+  z-index: 30;
+
   border-right: 1px solid var(--card-border);
   box-shadow: 2px 0 5px rgba(0,0,0,0.2);
 }
