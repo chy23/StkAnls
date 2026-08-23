@@ -3248,7 +3248,7 @@ async function loadIndexContributors() {
           <div class="stock-header">
             <div>
               <div class="stock-symbol"><a href="${linkURL}" target="_blank" style="color: inherit; text-decoration: none;">${stock.symbol}</a></div>
-              <div class="stock-name">${stock.name}</div>
+              <div class="stock-name">${TW_NAMES[stock.symbol] || stock.name}</div>
             </div>
             <div class="${colorClass}" style="font-weight: bold; font-size: 1.1rem; text-align: right;">
               ${sign}${stock.contribution} 點
@@ -3262,6 +3262,17 @@ async function loadIndexContributors() {
           <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px;">
             <div class="text-sm text-gray-400">今日漲跌幅</div>
             <div class="${stock.changePercent > 0 ? 'text-green-500' : (stock.changePercent < 0 ? 'text-red-500' : 'text-gray-400')}">${stock.changePercent > 0 ? '+' : ''}${stock.changePercent}%</div>
+          </div>
+          <div class="mt-2 pt-2 border-t border-gray-700/50" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; color: #9ca3af;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+              <span>KD指標:</span> <span style="color: #e5e7eb;">${stock.kd || 'N/A'}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+              <span>MACD:</span> <span style="color: #e5e7eb;">${stock.macd || 'N/A'}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>RSI:</span> <span style="color: #e5e7eb;">${stock.rsi || 'N/A'}</span>
+            </div>
           </div>
         </div>
       `;

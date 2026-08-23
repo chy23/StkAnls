@@ -1924,7 +1924,7 @@ def get_index_contributors():
     results = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         symbols = list(TW_WEIGHT_MULTIPLIERS.keys())
-        futures = {executor.submit(fetch_stock_data, sym, False): sym for sym in symbols}
+        futures = {executor.submit(fetch_stock_data, sym, True): sym for sym in symbols}
         
         for future in concurrent.futures.as_completed(futures):
             sym = futures[future]
@@ -1940,7 +1940,10 @@ def get_index_contributors():
                     "currentPrice": data['currentPrice'],
                     "change": change,
                     "changePercent": data['changePercent'],
-                    "contribution": contribution
+                    "contribution": contribution,
+                    "kd": data.get("kd", "N/A"),
+                    "macd": data.get("macd", "N/A"),
+                    "rsi": data.get("rsi", "N/A")
                 })
     
     # Sort by absolute contribution (highest impact first)
