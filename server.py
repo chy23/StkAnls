@@ -155,6 +155,13 @@ def calculate_technicals(df):
     true_range = ranges.max(axis=1)
     atr = true_range.rolling(14).mean()
     
+    # Volume Ratio (Today's Vol / 20-day Avg Vol)
+    if 'Volume' in df.columns:
+        vol_sma20 = df['Volume'].rolling(window=20).mean()
+        vol_ratio = df['Volume'] / vol_sma20
+    else:
+        vol_ratio = None
+    
     # Retrieve latest values
     macd_val = round(macd_line.iloc[-1], 2)
     sig_val = round(signal_line.iloc[-1], 2)
@@ -168,6 +175,7 @@ def calculate_technicals(df):
     
     sma60_val = round(sma60.iloc[-1], 2) if sma60 is not None and not pd.isna(sma60.iloc[-1]) else "N/A"
     atr_val = round(atr.iloc[-1], 2) if not pd.isna(atr.iloc[-1]) else "N/A"
+    vol_ratio_val = round(vol_ratio.iloc[-1], 2) if vol_ratio is not None and not pd.isna(vol_ratio.iloc[-1]) else "N/A"
     
     return {
         'macd': f"MACD:{macd_val}/Sig:{sig_val}",
@@ -176,6 +184,7 @@ def calculate_technicals(df):
         'bollinger': f"U:{upper_val}/M:{mid_val}/L:{lower_val}",
         'ma': f"20MA:{mid_val}/60MA:{sma60_val}",
         'atr': atr_val,
+        'vol_ratio': vol_ratio_val,
         'raw_lower': lower_val,
         'raw_upper': upper_val,
         'raw_20ma': mid_val,
@@ -310,6 +319,10 @@ def fetch_stock_data(symbol, include_history=False):
                 result['macd'] = cached['macd']
                 result['kd'] = cached['kd']
                 result['industry'] = cached.get('industry', 'N/A')
+                result['dividendYield'] = cached.get('dividendYield', 'N/A')
+                result['targetMeanPrice'] = cached.get('targetMeanPrice', 'N/A')
+                result['recommendationKey'] = cached.get('recommendationKey', 'N/A')
+                result['vol_ratio'] = cached.get('vol_ratio', 'N/A')
             else:
                 try:
                     info = ticker.info
@@ -317,6 +330,20 @@ def fetch_stock_data(symbol, include_history=False):
                     result['eps'] = round(info.get('trailingEps', 0), 2) if info.get('trailingEps') else 'N/A'
                     result['roe'] = round(info.get('returnOnEquity', 0) * 100, 2) if info.get('returnOnEquity') else 'N/A'
                     result['roa'] = round(info.get('returnOnAssets', 0) * 100, 2) if info.get('returnOnAssets') else 'N/A'
+                    
+                    dy = info.get('dividendYield') or info.get('trailingAnnualDividendYield')
+                    result['dividendYield'] = round(dy * 100, 2) if dy else 'N/A'
+                    
+                    result['targetMeanPrice'] = round(info.get('targetMeanPrice', 0), 2) if info.get('targetMeanPrice') else 'N/A'
+                    
+                    rec = info.get('recommendationKey', 'N/A')
+                    if isinstance(rec, str):
+                        rec_map = {
+                            'strong_buy': '強力買進', 'buy': '買進', 'hold': '持有', 'underperform': '減碼', 'sell': '賣出'
+                        }
+                        result['recommendationKey'] = rec_map.get(rec, rec)
+                    else:
+                        result['recommendationKey'] = 'N/A'
                     
                     # Translate some common English industries
                     ind = info.get('industry') or info.get('sector') or 'N/A'
@@ -339,6 +366,9 @@ def fetch_stock_data(symbol, include_history=False):
                     result['roe'] = 'N/A'
                     result['roa'] = 'N/A'
                     result['industry'] = 'N/A'
+                    result['dividendYield'] = 'N/A'
+                    result['targetMeanPrice'] = 'N/A'
+                    result['recommendationKey'] = 'N/A'
                 
                 try:
                     # Fetching 3mo to ensure MA60 has enough data
@@ -351,6 +381,7 @@ def fetch_stock_data(symbol, include_history=False):
                         result['bollinger'] = techs.get('bollinger', 'N/A')
                         result['ma'] = techs.get('ma', 'N/A')
                         result['atr'] = techs.get('atr', 'N/A')
+                        result['vol_ratio'] = techs.get('vol_ratio', 'N/A')
                     else:
                         result['macd'] = "N/A"
                         result['kd'] = "N/A"
@@ -358,6 +389,7 @@ def fetch_stock_data(symbol, include_history=False):
                         result['bollinger'] = "N/A"
                         result['ma'] = "N/A"
                         result['atr'] = "N/A"
+                        result['vol_ratio'] = "N/A"
                 except Exception as e:
                     print(f"History fetch failed for {symbol}: {e}")
                     result['macd'] = "N/A"
@@ -366,6 +398,7 @@ def fetch_stock_data(symbol, include_history=False):
                     result['bollinger'] = "N/A"
                     result['ma'] = "N/A"
                     result['atr'] = "N/A"
+                    result['vol_ratio'] = "N/A"
                 
                 # Cache if we successfully got some data
                 if result['pe'] != 'N/A' or result['macd'] != 'N/A':
@@ -377,7 +410,11 @@ def fetch_stock_data(symbol, include_history=False):
                         'roa': result['roa'],
                         'macd': result['macd'],
                         'kd': result['kd'],
-                        'industry': result.get('industry', 'N/A')
+                        'industry': result.get('industry', 'N/A'),
+                        'dividendYield': result.get('dividendYield', 'N/A'),
+                        'targetMeanPrice': result.get('targetMeanPrice', 'N/A'),
+                        'recommendationKey': result.get('recommendationKey', 'N/A'),
+                        'vol_ratio': result.get('vol_ratio', 'N/A')
                     }
             
         return result
@@ -445,6 +482,10 @@ def get_screened_stocks():
                     "rsi": data.get('rsi', 'N/A'),
                     "bollinger": data.get('bollinger', 'N/A'),
                     "ma": data.get('ma', 'N/A'),
+                    "dividendYield": data.get('dividendYield', 'N/A'),
+                    "targetMeanPrice": data.get('targetMeanPrice', 'N/A'),
+                    "recommendationKey": data.get('recommendationKey', 'N/A'),
+                    "vol_ratio": data.get('vol_ratio', 'N/A'),
                     "trend": "向上" if data['changePercent'] > 0 else "盤整" if data['changePercent'] > -1 else "向下",
                     "reason": f"今日漲跌: {data['changePercent']}%"
                 })

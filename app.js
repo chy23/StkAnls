@@ -607,6 +607,36 @@ function renderTableData(dataId, data) {
       maDisplay = `<div style="font-size: 0.85rem; line-height: 1.4; color: var(--text-secondary);">${m20}<br/>${m60}</div>`;
     }
 
+    let yieldColor = 'inherit';
+    let yieldDisplay = item.dividendYield !== 'N/A' ? `${item.dividendYield}%` : 'N/A';
+    if (item.dividendYield !== 'N/A') {
+      const y = parseFloat(item.dividendYield);
+      if (y > 5) yieldColor = 'var(--success-color)';
+    }
+
+    let recDisplay = item.recommendationKey || 'N/A';
+    let targetDisplay = item.targetMeanPrice || 'N/A';
+    let targetColor = 'inherit';
+    if (item.targetMeanPrice !== 'N/A' && item.currentPrice !== 'N/A') {
+      const cp = parseFloat(item.currentPrice);
+      const tp = parseFloat(item.targetMeanPrice);
+      if (tp > cp * 1.1) targetColor = 'var(--success-color)';
+      else if (tp < cp) targetColor = 'var(--danger-color)';
+    }
+    let analystDisplay = `<div style="font-size: 0.85rem; line-height: 1.4;">${recDisplay}<br/><span style="color: ${targetColor}; font-weight: 600;">${targetDisplay}</span></div>`;
+
+    let volDisplay = item.vol_ratio || 'N/A';
+    if (volDisplay !== 'N/A') {
+      const vr = parseFloat(volDisplay);
+      if (vr > 2) {
+        volDisplay = `<span style="color: var(--success-color); font-weight: bold;">${vr}x 🔥</span>`;
+      } else if (vr < 0.5) {
+        volDisplay = `<span style="color: var(--text-secondary);">${vr}x 🧊</span>`;
+      } else {
+        volDisplay = `${vr}x`;
+      }
+    }
+
     html += `
       <tr style="${rowStyle}">
         <td>
@@ -630,6 +660,9 @@ function renderTableData(dataId, data) {
         <td style="color: ${rsiColor}; font-weight: 600;">${rsiDisplay}</td>
         <td>${bbDisplay}</td>
         <td>${maDisplay}</td>
+        <td>${analystDisplay}</td>
+        <td style="color: ${yieldColor}; font-weight: 600;">${yieldDisplay}</td>
+        <td>${volDisplay}</td>
         <td style="font-size: 0.85rem; color: var(--text-secondary);">${item.reason}</td>
       </tr>
     `;
