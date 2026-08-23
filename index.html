@@ -35,7 +35,7 @@
       });
     }
   </script>
-  <link rel="stylesheet" href="style.css?v=43">
+  <link rel="stylesheet" href="style.css?v=44">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -254,6 +254,9 @@
                   <th>法人目標<br/><span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">(評級/均價)</span></th>
                   <th>殖利率<br/><span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">(Yield)</span></th>
                   <th>量能比<br/><span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">(Vol Ratio)</span></th>
+                  <th>趨勢排列<br/><span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">(Alignment)</span></th>
+                  <th>Beta<br/><span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">(連動性)</span></th>
+                  <th>軋空比<br/><span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">(Short %)</span></th>
                   <th style="min-width: 150px;">操作理由</th>
                 </tr>
               </thead>
@@ -283,6 +286,9 @@
                   <th>法人目標</th>
                   <th>殖利率</th>
                   <th>量能比</th>
+                  <th>趨勢排列</th>
+                  <th>Beta</th>
+                  <th>軋空比</th>
                   <th style="min-width: 150px;">操作理由</th>
                 </tr>
               </thead>
@@ -312,6 +318,9 @@
                   <th>法人目標</th>
                   <th>殖利率</th>
                   <th>量能比</th>
+                  <th>趨勢排列</th>
+                  <th>Beta</th>
+                  <th>軋空比</th>
                   <th style="min-width: 150px;">操作理由</th>
                 </tr>
               </thead>
@@ -325,13 +334,13 @@
         <strong style="color: white; font-size: 0.95rem;">💡 系統亮燈機制與參數說明：</strong><br/>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; margin-top: 8px;">
           <div>
-            <span style="color: var(--success-color);">■ 偏多 (紅燈)</span>：<strong>P/E</strong> &lt; 15｜<strong>RSI</strong> &lt; 30 (超賣)｜<strong>KD</strong> K &gt; D｜<strong>MACD</strong> 翻紅｜<strong>殖利率</strong> &gt; 5%｜<strong>量能比</strong> &gt; 2x (🔥爆量)<br/>
-            <span style="color: var(--danger-color);">■ 偏空 (綠燈)</span>：<strong>P/E</strong> &gt; 20｜<strong>RSI</strong> &gt; 70 (超買)｜<strong>KD</strong> K &lt; D｜<strong>MACD</strong> 翻綠｜<strong>量能比</strong> &lt; 0.5x (🧊量縮)
+            <span style="color: var(--success-color);">■ 偏多 (紅燈)</span>：<strong>P/E</strong> &lt; 15｜<strong>RSI</strong> &lt; 30 (超賣)｜<strong>KD</strong> K &gt; D｜<strong>MACD</strong> 翻紅｜<strong>殖利率</strong> &gt; 5%｜<strong>量能比</strong> &gt; 2x (🔥爆量)｜<strong>多頭排列</strong><br/>
+            <span style="color: var(--danger-color);">■ 偏空 (綠燈)</span>：<strong>P/E</strong> &gt; 20｜<strong>RSI</strong> &gt; 70 (超買)｜<strong>KD</strong> K &lt; D｜<strong>MACD</strong> 翻綠｜<strong>量能比</strong> &lt; 0.5x (🧊量縮)｜<strong>空頭排列</strong>
           </div>
           <div>
+            <strong>進階屬性</strong>：<strong>Beta</strong> &gt; 1.2 (高波動攻擊股)、Beta &lt; 0.8 (低波動防禦股)。<strong>軋空比</strong> &gt; 10% 代表潛在軋空行情。<br/>
             <strong>法人目標價</strong>：擷取華爾街共識，若目標價 &gt; 現價 10% 亮紅燈，目標價 &lt; 現價亮綠燈。<br/>
-            <strong>防守停損</strong>：採用動態 ATR，設定為 買進價 - (1.5 × 近期真實波動幅度)。<br/>
-            <strong>建議買入價</strong> = 預估 EPS × 保守本益比 (15倍)。<strong>建議賣出價</strong> = 預估 EPS × 合理本益比 (20倍)。
+            <strong>防守停損</strong>：採用動態 ATR，設定為 買進價 - (1.5 × 近期真實波動幅度)。
           </div>
         </div>
       </div>
@@ -351,8 +360,8 @@
     </div>
   </div>
 
-  <script src="changelog.js?v=43"></script>
-  <script src="app.js?v=43"></script>
+  <script src="changelog.js?v=44"></script>
+  <script src="app.js?v=44"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

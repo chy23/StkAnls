@@ -637,6 +637,26 @@ function renderTableData(dataId, data) {
       }
     }
 
+    let trendAlignDisplay = item.trend_alignment || 'N/A';
+    let trendColor = 'inherit';
+    if (trendAlignDisplay.includes('多頭')) trendColor = 'var(--success-color)';
+    else if (trendAlignDisplay.includes('空頭')) trendColor = 'var(--danger-color)';
+
+    let betaDisplay = item.beta !== 'N/A' ? `${item.beta}` : 'N/A';
+    let betaColor = 'inherit';
+    if (item.beta !== 'N/A') {
+        const b = parseFloat(item.beta);
+        if (b > 1.2) betaColor = 'var(--success-color)';
+        else if (b < 0.8) betaColor = 'var(--text-secondary)';
+    }
+
+    let shortDisplay = item.shortPercentOfFloat !== 'N/A' ? `${item.shortPercentOfFloat}%` : 'N/A';
+    let shortColor = 'inherit';
+    if (item.shortPercentOfFloat !== 'N/A') {
+        const s = parseFloat(item.shortPercentOfFloat);
+        if (s > 10) shortColor = 'var(--success-color)';
+    }
+
     html += `
       <tr style="${rowStyle}">
         <td>
@@ -663,6 +683,9 @@ function renderTableData(dataId, data) {
         <td>${analystDisplay}</td>
         <td style="color: ${yieldColor}; font-weight: 600;">${yieldDisplay}</td>
         <td>${volDisplay}</td>
+        <td style="color: ${trendColor}; font-weight: 600;">${trendAlignDisplay}</td>
+        <td style="color: ${betaColor};">${betaDisplay}</td>
+        <td style="color: ${shortColor}; font-weight: 600;">${shortDisplay}</td>
         <td style="font-size: 0.85rem; color: var(--text-secondary);">${item.reason}</td>
       </tr>
     `;

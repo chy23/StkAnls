@@ -323,6 +323,8 @@ def fetch_stock_data(symbol, include_history=False):
                 result['targetMeanPrice'] = cached.get('targetMeanPrice', 'N/A')
                 result['recommendationKey'] = cached.get('recommendationKey', 'N/A')
                 result['vol_ratio'] = cached.get('vol_ratio', 'N/A')
+                result['beta'] = cached.get('beta', 'N/A')
+                result['shortPercentOfFloat'] = cached.get('shortPercentOfFloat', 'N/A')
             else:
                 try:
                     info = ticker.info
@@ -335,6 +337,11 @@ def fetch_stock_data(symbol, include_history=False):
                     result['dividendYield'] = round(dy * 100, 2) if dy else 'N/A'
                     
                     result['targetMeanPrice'] = round(info.get('targetMeanPrice', 0), 2) if info.get('targetMeanPrice') else 'N/A'
+                    
+                    result['beta'] = round(info.get('beta', 0), 2) if info.get('beta') else 'N/A'
+                    
+                    short_pct = info.get('shortPercentOfFloat')
+                    result['shortPercentOfFloat'] = round(short_pct * 100, 2) if short_pct else 'N/A'
                     
                     rec = info.get('recommendationKey', 'N/A')
                     if isinstance(rec, str):
@@ -369,6 +376,8 @@ def fetch_stock_data(symbol, include_history=False):
                     result['dividendYield'] = 'N/A'
                     result['targetMeanPrice'] = 'N/A'
                     result['recommendationKey'] = 'N/A'
+                    result['beta'] = 'N/A'
+                    result['shortPercentOfFloat'] = 'N/A'
                 
                 try:
                     # Fetching 3mo to ensure MA60 has enough data
@@ -414,7 +423,9 @@ def fetch_stock_data(symbol, include_history=False):
                         'dividendYield': result.get('dividendYield', 'N/A'),
                         'targetMeanPrice': result.get('targetMeanPrice', 'N/A'),
                         'recommendationKey': result.get('recommendationKey', 'N/A'),
-                        'vol_ratio': result.get('vol_ratio', 'N/A')
+                        'vol_ratio': result.get('vol_ratio', 'N/A'),
+                        'beta': result.get('beta', 'N/A'),
+                        'shortPercentOfFloat': result.get('shortPercentOfFloat', 'N/A')
                     }
             
         return result
@@ -465,6 +476,21 @@ def get_screened_stocks():
                 else:
                     stop_loss = cp * 0.92  # 8% stop loss fallback
                 
+                # Trend Alignment Logic
+                trend_alignment = "➖ 盤整震盪"
+                ma20 = data.get('raw_20ma', 'N/A')
+                ma60 = data.get('raw_60ma', 'N/A')
+                if ma20 != 'N/A' and ma60 != 'N/A':
+                    try:
+                        m20 = float(ma20)
+                        m60 = float(ma60)
+                        if cp > m20 and m20 > m60:
+                            trend_alignment = "📈 多頭排列"
+                        elif cp < m20 and m20 < m60:
+                            trend_alignment = "📉 空頭排列"
+                    except:
+                        pass
+
                 results.append({
                     "symbol": data['symbol'].replace('.TW', ''),
                     "name": SYMBOL_NAMES.get(data['symbol'], data['symbol']),
@@ -486,6 +512,9 @@ def get_screened_stocks():
                     "targetMeanPrice": data.get('targetMeanPrice', 'N/A'),
                     "recommendationKey": data.get('recommendationKey', 'N/A'),
                     "vol_ratio": data.get('vol_ratio', 'N/A'),
+                    "beta": data.get('beta', 'N/A'),
+                    "shortPercentOfFloat": data.get('shortPercentOfFloat', 'N/A'),
+                    "trend_alignment": trend_alignment,
                     "trend": "向上" if data['changePercent'] > 0 else "盤整" if data['changePercent'] > -1 else "向下",
                     "reason": f"今日漲跌: {data['changePercent']}%"
                 })
