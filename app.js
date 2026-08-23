@@ -766,8 +766,17 @@ function setupTabs() {
       }
       catFilter.innerHTML = optionsHtml;
   }
-}
-      refreshBtn.innerHTML = '🔄 重新整理';
+  
+  const refreshBtn = document.getElementById("refresh-btn");
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", async () => {
+      refreshBtn.innerHTML = "🔄 載入中...";
+      refreshBtn.disabled = true;
+      cachedCoreStocks = null;
+      cachedScreenedStocks = null;
+      await renderStockCards();
+      await loadRecommendations();
+      refreshBtn.innerHTML = "🔄 重新整理";
       refreshBtn.disabled = false;
     });
   }
