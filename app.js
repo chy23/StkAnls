@@ -781,6 +781,8 @@ function setupTabs() {
       refreshBtn.disabled = false;
     });
   }
+}
+
 
   // Search Logic
   const searchBtn = document.getElementById('search-btn');
@@ -3198,7 +3200,6 @@ const CATEGORY_MAP = {
       searchBtn.disabled = false;
     });
   }
-}
 
 document.addEventListener('DOMContentLoaded', () => {
   setupMacroTabs();
