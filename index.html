@@ -35,7 +35,7 @@
       });
     }
   </script>
-  <link rel="stylesheet" href="style.css?v=41">
+  <link rel="stylesheet" href="style.css?v=42">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -312,10 +312,19 @@
         </div>
       </div>
       
-      <div style="margin-top: 15px; font-size: 0.85rem; color: var(--text-secondary); text-align: right;">
-        💡 估值算法說明：<br/>
-        <strong>建議買入價</strong> = 預估 EPS × 保守本益比 (15倍)，或跌幅 10%<br/>
-        <strong>建議賣出價</strong> = 預估 EPS × 合理本益比 (20倍)，或漲幅 20%
+      <div style="margin-top: 15px; font-size: 0.85rem; color: var(--text-secondary); text-align: left; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; line-height: 1.6;">
+        <strong style="color: white; font-size: 0.95rem;">💡 系統亮燈機制與參數說明：</strong><br/>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; margin-top: 8px;">
+          <div>
+            <span style="color: var(--success-color);">■ 偏多 (紅燈)</span>：<strong>P/E</strong> &lt; 15｜<strong>RSI</strong> &lt; 30 (超賣)｜<strong>KD</strong> 黃金交叉 (K &gt; D)｜<strong>MACD</strong> 柱體翻紅<br/>
+            <span style="color: var(--danger-color);">■ 偏空 (綠燈)</span>：<strong>P/E</strong> &gt; 20｜<strong>RSI</strong> &gt; 70 (超買)｜<strong>KD</strong> 死亡交叉 (K &lt; D)｜<strong>MACD</strong> 柱體翻綠
+          </div>
+          <div>
+            <strong>防守停損</strong>：採用動態 ATR，設定為 買進價 - (1.5 × 近期真實波動幅度)。<br/>
+            <strong>建議買入價</strong> = 預估 EPS × 保守本益比 (15倍)，或跌幅 10%。<br/>
+            <strong>建議賣出價</strong> = 預估 EPS × 合理本益比 (20倍)，或漲幅 20%。
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -333,8 +342,8 @@
     </div>
   </div>
 
-  <script src="changelog.js?v=41"></script>
-  <script src="app.js?v=41"></script>
+  <script src="changelog.js?v=42"></script>
+  <script src="app.js?v=42"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
