@@ -392,12 +392,12 @@ async function renderStockCards() {
       const hasValidData = live && live.eps !== 'N/A' && live.eps !== undefined;
       const eps = hasValidData ? (live.eps + ' / ' + live.efficiency) : stock.eps;
       // Always use the curated valuation anchor, sweet spot, and logic for core stocks since they have specific industry reasons
-      const valuationAnchor = stock.valuationAnchor;
-      const sweetSpot = stock.sweetSpot;
-      const logic = stock.logic;
+      const valuationAnchor = stock.valuationAnchor || 'N/A';
+      const sweetSpot = stock.sweetSpot || 'N/A';
+      const logic = stock.logic || '';
 
       let isSweet = false;
-      if (live && live.currentPrice !== 'N/A') {
+      if (live && live.currentPrice !== 'N/A' && sweetSpot !== 'N/A') {
         const cp = extractNumber(live.currentPrice);
         const sp = extractNumber(sweetSpot);
         if (!isNaN(cp) && !isNaN(sp) && cp <= sp) {
@@ -439,6 +439,7 @@ async function renderStockCards() {
             </div>
             
             ${(function() {
+              if (sweetSpot === 'N/A') return '';
               const buyStr = sweetSpot.replace(/[^\\d.]/g, '');
               const buyNum = parseFloat(buyStr);
               const curNum = live && live.currentPrice !== 'N/A' ? parseFloat(live.currentPrice.toString().replace(/,/g, '')) : NaN;
@@ -3222,7 +3223,7 @@ async function loadIndexContributors() {
   `;
 
   try {
-    const response = await fetchWithRetry(`${API_BASE_URL}/api/index-contributors`);
+    const response = await fetchWithRetry(`${API_BASE}/index-contributors`);
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
     
