@@ -369,12 +369,15 @@ def fetch_stock_data(symbol, include_history=False):
                     result['industry'] = trans_dict.get(ind, ind)
                 except Exception as e:
                     print(f"Info fetch failed for {symbol}: {e}")
-                    result['pe'] = 'N/A'
+                    # Try TWSE fallback
+                    twse = get_twse_fundamentals()
+                    clean_sym = symbol.replace('.TW', '')
+                    result['pe'] = twse.get(clean_sym, {}).get('PEratio', 'N/A')
+                    result['dividendYield'] = twse.get(clean_sym, {}).get('Yield', 'N/A')
                     result['eps'] = 'N/A'
                     result['roe'] = 'N/A'
                     result['roa'] = 'N/A'
                     result['industry'] = 'N/A'
-                    result['dividendYield'] = 'N/A'
                     result['targetMeanPrice'] = 'N/A'
                     result['recommendationKey'] = 'N/A'
                     result['beta'] = 'N/A'
@@ -411,7 +414,41 @@ def fetch_stock_data(symbol, include_history=False):
                     result['vol_ratio'] = "N/A"
                 
                 # Cache if we successfully got some data
-                if result['pe'] != 'N/A' or result['macd'] != 'N/A':
+                # Cache even if N/A to prevent hammering Yahoo Finance during rate limit, but only for 3 minutes
+                if result['macd'] == 'N/A':
+                    DATA_CACHE[symbol] = {
+                        'timestamp': now - CACHE_TTL + 180, # Expire in 3 mins
+                        'pe': result['pe'],
+                        'eps': result['eps'],
+                        'roe': result['roe'],
+                        'roa': result['roa'],
+                        'macd': result['macd'],
+                        'kd': result['kd'],
+                        'industry': result.get('industry', 'N/A'),
+                        'dividendYield': result.get('dividendYield', 'N/A'),
+                        'targetMeanPrice': result.get('targetMeanPrice', 'N/A'),
+                        'recommendationKey': result.get('recommendationKey', 'N/A'),
+                        'vol_ratio': result.get('vol_ratio', 'N/A'),
+                        'beta': result.get('beta', 'N/A'),
+                        'shortPercentOfFloat': result.get('shortPercentOfFloat', 'N/A')
+                    }
+                else:
+                    DATA_CACHE[symbol] = {
+                        'timestamp': now,
+                        'pe': result['pe'],
+                        'eps': result['eps'],
+                        'roe': result['roe'],
+                        'roa': result['roa'],
+                        'macd': result['macd'],
+                        'kd': result['kd'],
+                        'industry': result.get('industry', 'N/A'),
+                        'dividendYield': result.get('dividendYield', 'N/A'),
+                        'targetMeanPrice': result.get('targetMeanPrice', 'N/A'),
+                        'recommendationKey': result.get('recommendationKey', 'N/A'),
+                        'vol_ratio': result.get('vol_ratio', 'N/A'),
+                        'beta': result.get('beta', 'N/A'),
+                        'shortPercentOfFloat': result.get('shortPercentOfFloat', 'N/A')
+                    }
                     DATA_CACHE[symbol] = {
                         'timestamp': now,
                         'pe': result['pe'],
