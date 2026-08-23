@@ -35,7 +35,7 @@
       });
     }
   </script>
-  <link rel="stylesheet" href="style.css?v=45">
+  <link rel="stylesheet" href="style.css?v=46">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -145,16 +145,9 @@
       </div>
     </section>
 
-    <!-- Market Selection Tabs -->
-    <div class="market-tabs fade-in" style="animation-delay: 0.15s; flex-wrap: wrap; align-items: center;">
-      <button class="market-btn active" data-market="TW">🇹🇼 台灣市場</button>
-      <button class="market-btn" data-market="US">🇺🇸 美國市場</button>
-      <button class="market-btn" data-market="OTHER">🌍 其他股市推薦</button>
-      <button class="refresh-btn" id="refresh-btn" title="重新載入最新資料">🔄 重新整理</button>
-    </div>
-
     <!-- Custom Search and Filter -->
-    <div class="search-container sticky-bar fade-in" style="animation-delay: 0.18s; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+    <div class="search-container sticky-bar fade-in" style="animation-delay: 0.18s; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
+      <button class="refresh-btn" id="refresh-btn" title="重新載入最新資料" style="background: rgba(16, 185, 129, 0.2); border: 1px solid var(--success-color); color: var(--success-color); padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">🔄 重新抓取最新資料</button>
       <select id="category-filter" class="search-input" style="padding: 0.8rem; border-radius: 8px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.2);">
         <option value="">選擇台股類別...</option>
         <option value="半導體業">半導體業</option>
@@ -371,8 +364,8 @@
     </div>
   </div>
 
-  <script src="changelog.js?v=45"></script>
-  <script src="app.js?v=45"></script>
+  <script src="changelog.js?v=46"></script>
+  <script src="app.js?v=46"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

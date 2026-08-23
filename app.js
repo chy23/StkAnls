@@ -310,7 +310,7 @@ const extractNumber = (str) => {
 async function renderStockCards() {
   const container = document.getElementById('core-stocks-container');
   
-  const filteredStocks = coreStocks.filter(s => getMarket(s.symbol) === currentMarket);
+  const filteredStocks = coreStocks;
   
   if (filteredStocks.length === 0) {
     container.innerHTML = '<div style="text-align: center; width: 100%; color: var(--text-secondary);">此市場目前無觀察清單。</div>';
@@ -359,9 +359,28 @@ async function renderStockCards() {
     });
 
     let html = '';
+    
+    // Sort and group by market
+    const grouped = { 'TW': [], 'US': [], 'OTHER': [] };
     filteredStocks.forEach(stock => {
-      const live = dynamicData[stock.symbol];
-      const linkURL = getMarket(stock.symbol) === 'TW' ? `https://tw.stock.yahoo.com/quote/${stock.symbol}` : `https://finance.yahoo.com/quote/${stock.symbol}`;
+        const m = getMarket(stock.symbol);
+        if (grouped[m]) grouped[m].push(stock);
+        else grouped['OTHER'].push(stock);
+    });
+
+    const marketLabels = {
+        'TW': '🇹🇼 台股焦點',
+        'US': '🇺🇸 美股焦點',
+        'OTHER': '🌍 歐洲與其他市場'
+    };
+
+    ['TW', 'US', 'OTHER'].forEach(market => {
+        if (grouped[market].length > 0) {
+            html += `<h3 style="grid-column: 1 / -1; margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; color: var(--accent-color);">${marketLabels[market]}</h3>`;
+            
+            grouped[market].forEach(stock => {
+              const live = dynamicData[stock.symbol];
+              const linkURL = getMarket(stock.symbol) === 'TW' ? `https://tw.stock.yahoo.com/quote/${stock.symbol}` : `https://finance.yahoo.com/quote/${stock.symbol}`;
       
       let livePriceHTML = `<div class="data-row"><span class="data-label">最新即時價</span><span class="data-value text-secondary">無法取得</span></div>`;
       if (live) {
@@ -463,6 +482,8 @@ async function renderStockCards() {
           </div>
         </div>
       `;
+            });
+        }
     });
     
     container.innerHTML = html;
@@ -493,7 +514,7 @@ async function loadRecommendations() {
     return;
   }
   
-  const filteredStocks = cachedScreenedStocks.filter(s => getMarket(s.symbol) === currentMarket);
+  const filteredStocks = cachedScreenedStocks;
   
   // For demo, we split the filtered stocks into the 3 tabs roughly
   const chunk = Math.ceil(filteredStocks.length / 3);
@@ -510,8 +531,32 @@ function renderTableData(dataId, data) {
   const tbody = document.getElementById(dataId);
   let html = '';
   
-  data.forEach(item => {
-    const linkURL = getMarket(item.symbol) === 'TW' ? `https://tw.stock.yahoo.com/quote/${item.symbol}` : `https://finance.yahoo.com/quote/${item.symbol}`;
+  const grouped = { 'TW': [], 'US': [], 'OTHER': [] };
+  data.forEach(stock => {
+      const m = getMarket(stock.symbol);
+      if (grouped[m]) grouped[m].push(stock);
+      else grouped['OTHER'].push(stock);
+  });
+
+  const marketLabels = {
+      'TW': '🇹🇼 台灣市場 (Taiwan)',
+      'US': '🇺🇸 美國市場 (US)',
+      'OTHER': '🌍 歐洲與其他市場'
+  };
+
+  const colCounts = {
+      'table-short': 17,
+      'table-mid': 11,
+      'table-long': 11
+  };
+  const colCount = colCounts[dataId] || 17;
+
+  ['TW', 'US', 'OTHER'].forEach(market => {
+      if (grouped[market].length > 0) {
+          html += `<tr><td colspan="${colCount}" style="background: rgba(255,255,255,0.05); font-weight: bold; padding: 10px 15px; color: var(--accent-color); border-bottom: 2px solid rgba(255,255,255,0.1); border-top: 2px solid rgba(255,255,255,0.1); text-align: left;">${marketLabels[market]}</td></tr>`;
+          
+          grouped[market].forEach(item => {
+            const linkURL = getMarket(item.symbol) === 'TW' ? `https://tw.stock.yahoo.com/quote/${item.symbol}` : `https://finance.yahoo.com/quote/${item.symbol}`;
     
     let isSweet = false;
     if (item.currentPrice !== 'N/A' && item.buyPrice) {
@@ -689,6 +734,8 @@ function renderTableData(dataId, data) {
         <td style="font-size: 0.85rem; color: var(--text-secondary);">${item.reason}</td>
       </tr>
     `;
+          });
+      }
   });
   
   tbody.innerHTML = html;
@@ -710,65 +757,16 @@ function setupTabs() {
     });
   });
 
-  const marketBtns = document.querySelectorAll('.market-btn');
-  marketBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      marketBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      
-      currentMarket = btn.dataset.market;
-      
-      // Update UI for search features based on market
-      const catFilter = document.getElementById('category-filter');
-      const searchRes = document.getElementById('search-results-section');
-      const searchResContainer = document.getElementById('search-results-container');
-      
-      if (catFilter) {
-          catFilter.style.display = 'inline-block';
-          
-          let mapToUse;
-          let defaultText;
-          if (currentMarket === 'US') {
-              mapToUse = US_CATEGORY_MAP;
-              defaultText = '選擇美股類別...';
-          } else if (currentMarket === 'OTHER') {
-              mapToUse = OTHER_CATEGORY_MAP;
-              defaultText = '選擇其他市場類別...';
-          } else {
-              mapToUse = CATEGORY_MAP;
-              defaultText = '選擇台股類別...';
-          }
-          
-          let optionsHtml = `<option value="">${defaultText}</option>`;
-          for (const key in mapToUse) {
-              optionsHtml += `<option value="${key}">${key}</option>`;
-          }
-          catFilter.innerHTML = optionsHtml;
-          catFilter.value = ''; // Reset selection
+  const catFilter = document.getElementById("category-filter");
+  if (catFilter) {
+      let optionsHtml = "<option value=\"\">選擇產業類別...</option>";
+      const allMaps = {...CATEGORY_MAP, ...US_CATEGORY_MAP, ...OTHER_CATEGORY_MAP};
+      for (const key in allMaps) {
+          optionsHtml += "<option value=\"" + key + "\">" + key + "</option>";
       }
-      
-      if (searchRes) {
-          searchRes.style.display = 'none';
-      }
-      if (searchResContainer) {
-          searchResContainer.innerHTML = '';
-      }
-      
-      // Re-render data without re-fetching
-      renderStockCards();
-      loadRecommendations();
-    });
-  });
-
-  const refreshBtn = document.getElementById('refresh-btn');
-  if (refreshBtn) {
-    refreshBtn.addEventListener('click', async () => {
-      refreshBtn.innerHTML = '🔄 載入中...';
-      refreshBtn.disabled = true;
-      cachedCoreStocks = null;
-      cachedScreenedStocks = null;
-      await renderStockCards();
-      await loadRecommendations();
+      catFilter.innerHTML = optionsHtml;
+  }
+}
       refreshBtn.innerHTML = '🔄 重新整理';
       refreshBtn.disabled = false;
     });
