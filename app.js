@@ -3244,8 +3244,34 @@ async function loadIndexContributors() {
       const linkURL = `https://tw.stock.yahoo.com/quote/${stock.symbol}`;
       
       let sign = stock.contribution > 0 ? '+' : '';
-      let colorClass = stock.contribution > 0 ? 'text-green-500' : (stock.contribution < 0 ? 'text-red-500' : 'text-gray-400');
+      let colorStyle = stock.contribution > 0 ? 'color: var(--success-color);' : (stock.contribution < 0 ? 'color: var(--danger-color);' : 'color: var(--text-secondary);');
+      let pctColorStyle = stock.changePercent > 0 ? 'color: var(--success-color);' : (stock.changePercent < 0 ? 'color: var(--danger-color);' : 'color: var(--text-secondary);');
       
+      let kdColor = '#e5e7eb';
+      if (stock.kd && stock.kd !== 'N/A' && stock.kd.includes('/')) {
+        const [k, d] = stock.kd.split('/').map(parseFloat);
+        if (!isNaN(k) && !isNaN(d)) {
+          if (k > d) kdColor = 'var(--success-color)';
+          else if (k < d) kdColor = 'var(--danger-color)';
+        }
+      }
+
+      let macdColor = '#e5e7eb';
+      if (stock.macd && stock.macd !== 'N/A' && stock.macd.includes('/')) {
+        const [m, s] = stock.macd.split('/').map(parseFloat);
+        if (!isNaN(m) && !isNaN(s)) {
+          if (m > s) macdColor = 'var(--success-color)';
+          else if (m < s) macdColor = 'var(--danger-color)';
+        }
+      }
+
+      let rsiColor = '#e5e7eb';
+      if (stock.rsi && stock.rsi !== 'N/A') {
+        const rsi = parseFloat(stock.rsi);
+        if (rsi < 30) rsiColor = 'var(--success-color)';
+        else if (rsi > 70) rsiColor = 'var(--danger-color)';
+      }
+
       html += `
         <div class="glass-panel stock-card fade-in" style="position: relative; ${highlightStyle}">
           ${badgeHTML}
@@ -3254,7 +3280,7 @@ async function loadIndexContributors() {
               <div class="stock-symbol"><a href="${linkURL}" target="_blank" style="color: inherit; text-decoration: none;">${stock.symbol}</a></div>
               <div class="stock-name">${TW_NAMES[stock.symbol] || stock.name}</div>
             </div>
-            <div class="${colorClass}" style="font-weight: bold; font-size: 1.1rem; text-align: right;">
+            <div style="${colorStyle} font-weight: bold; font-size: 1.1rem; text-align: right;">
               ${sign}${stock.contribution} 點
             </div>
           </div>
@@ -3265,17 +3291,17 @@ async function loadIndexContributors() {
           </div>
           <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px;">
             <div class="text-sm text-gray-400">今日漲跌幅</div>
-            <div class="${stock.changePercent > 0 ? 'text-green-500' : (stock.changePercent < 0 ? 'text-red-500' : 'text-gray-400')}">${stock.changePercent > 0 ? '+' : ''}${stock.changePercent}%</div>
+            <div style="${pctColorStyle}">${stock.changePercent > 0 ? '+' : ''}${stock.changePercent}%</div>
           </div>
           <div class="mt-2 pt-2 border-t border-gray-700/50" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; color: #9ca3af;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-              <span>KD指標:</span> <span style="color: #e5e7eb;">${stock.kd || 'N/A'}</span>
+              <span>KD指標:</span> <span style="color: ${kdColor}; font-weight: 500;">${stock.kd || 'N/A'}</span>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-              <span>MACD:</span> <span style="color: #e5e7eb;">${stock.macd || 'N/A'}</span>
+              <span>MACD:</span> <span style="color: ${macdColor}; font-weight: 500;">${stock.macd || 'N/A'}</span>
             </div>
             <div style="display: flex; justify-content: space-between;">
-              <span>RSI:</span> <span style="color: #e5e7eb;">${stock.rsi || 'N/A'}</span>
+              <span>RSI:</span> <span style="color: ${rsiColor}; font-weight: 500;">${stock.rsi || 'N/A'}</span>
             </div>
           </div>
         </div>
