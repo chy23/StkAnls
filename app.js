@@ -517,11 +517,15 @@ async function loadRecommendations() {
   
   const filteredStocks = cachedScreenedStocks;
   
-  // For demo, we split the filtered stocks into the 3 tabs roughly
-  const chunk = Math.ceil(filteredStocks.length / 3);
-  const shortList = filteredStocks.slice(0, chunk);
-  const midList = filteredStocks.slice(chunk, chunk * 2);
-  const longList = filteredStocks.slice(chunk * 2);
+  // Distribute stocks evenly across tabs so each tab has a mix of TW, US, and OTHER
+  const shortList = [];
+  const midList = [];
+  const longList = [];
+  filteredStocks.forEach((stock, i) => {
+    if (i % 3 === 0) shortList.push(stock);
+    else if (i % 3 === 1) midList.push(stock);
+    else longList.push(stock);
+  });
   
   renderTableData('table-short', shortList);
   renderTableData('table-mid', midList);

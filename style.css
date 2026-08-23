@@ -357,9 +357,6 @@ tr:hover {
 
 /* Sticky Table Column */
 .table-container {
-  overflow-x: auto;
-  overflow-y: auto;
-  max-height: 75vh;
   position: relative;
 }
 table th:first-child,
