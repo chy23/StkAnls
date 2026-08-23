@@ -587,6 +587,26 @@ function renderTableData(dataId, data) {
       macdDisplay = `<div style="font-size: 0.85rem; line-height: 1.4;">${m}<br/>${s}</div>`;
     }
 
+    let rsiColor = 'inherit';
+    let rsiDisplay = item.rsi || 'N/A';
+    if (rsiDisplay !== 'N/A') {
+      const r = parseFloat(rsiDisplay);
+      if (r < 30) rsiColor = 'var(--success-color)';
+      else if (r > 70) rsiColor = 'var(--danger-color)';
+    }
+    
+    let bbDisplay = item.bollinger || 'N/A';
+    if (bbDisplay !== 'N/A' && bbDisplay.includes('/')) {
+      const [u, m, l] = bbDisplay.split('/');
+      bbDisplay = `<div style="font-size: 0.85rem; line-height: 1.4; color: var(--text-secondary);">${u}<br/><span style="color:var(--text-primary);">${m}</span><br/>${l}</div>`;
+    }
+    
+    let maDisplay = item.ma || 'N/A';
+    if (maDisplay !== 'N/A' && maDisplay.includes('/')) {
+      const [m20, m60] = maDisplay.split('/');
+      maDisplay = `<div style="font-size: 0.85rem; line-height: 1.4; color: var(--text-secondary);">${m20}<br/>${m60}</div>`;
+    }
+
     html += `
       <tr style="${rowStyle}">
         <td>
@@ -607,6 +627,9 @@ function renderTableData(dataId, data) {
         <td style="color: ${roaColor};">${item.roa}</td>
         <td style="color: ${kdColor};">${kdDisplay}</td>
         <td style="color: ${macdColor};">${macdDisplay}</td>
+        <td style="color: ${rsiColor}; font-weight: 600;">${rsiDisplay}</td>
+        <td>${bbDisplay}</td>
+        <td>${maDisplay}</td>
         <td style="font-size: 0.85rem; color: var(--text-secondary);">${item.reason}</td>
       </tr>
     `;

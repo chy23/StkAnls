@@ -96,7 +96,7 @@ SYMBOL_NAMES = {
 
 def calculate_technicals(df):
     if len(df) < 30:
-        return None, None
+        return {}
     
     # MACD
     ema12 = df['Close'].ewm(span=12, adjust=False).mean()
@@ -126,12 +126,61 @@ def calculate_technicals(df):
         k_prev = k_curr
         d_prev = d_curr
         
+    # RSI (14 days)
+    delta = df['Close'].diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+    
+    # Bollinger Bands (20 days)
+    sma20 = df['Close'].rolling(window=20).mean()
+    std20 = df['Close'].rolling(window=20).std()
+    upper_band = sma20 + 2 * std20
+    lower_band = sma20 - 2 * std20
+    
+    # Moving Averages
+    sma60 = df['Close'].rolling(window=60).mean() if len(df) >= 60 else None
+    
+    # ATR (14 days)
+    # yfinance provides High, Low, Close
+    high_low = df['High'] - df['Low']
+    high_close = (df['High'] - df['Close'].shift()).abs()
+    low_close = (df['Low'] - df['Close'].shift()).abs()
+    
+    # We must construct a DataFrame and use max(axis=1) safely, some older pandas versions don't like np.max over Series
+    import pandas as pd
+    import numpy as np
+    ranges = pd.concat([high_low, high_close, low_close], axis=1)
+    true_range = ranges.max(axis=1)
+    atr = true_range.rolling(14).mean()
+    
+    # Retrieve latest values
     macd_val = round(macd_line.iloc[-1], 2)
     sig_val = round(signal_line.iloc[-1], 2)
     k_val = round(k[-1], 2)
     d_val = round(d[-1], 2)
+    rsi_val = round(rsi.iloc[-1], 2) if not pd.isna(rsi.iloc[-1]) else "N/A"
     
-    return f"MACD:{macd_val}/Sig:{sig_val}", f"K:{k_val}/D:{d_val}"
+    upper_val = round(upper_band.iloc[-1], 2) if not pd.isna(upper_band.iloc[-1]) else "N/A"
+    mid_val = round(sma20.iloc[-1], 2) if not pd.isna(sma20.iloc[-1]) else "N/A"
+    lower_val = round(lower_band.iloc[-1], 2) if not pd.isna(lower_band.iloc[-1]) else "N/A"
+    
+    sma60_val = round(sma60.iloc[-1], 2) if sma60 is not None and not pd.isna(sma60.iloc[-1]) else "N/A"
+    atr_val = round(atr.iloc[-1], 2) if not pd.isna(atr.iloc[-1]) else "N/A"
+    
+    return {
+        'macd': f"MACD:{macd_val}/Sig:{sig_val}",
+        'kd': f"K:{k_val}/D:{d_val}",
+        'rsi': rsi_val,
+        'bollinger': f"U:{upper_val}/M:{mid_val}/L:{lower_val}",
+        'ma': f"20MA:{mid_val}/60MA:{sma60_val}",
+        'atr': atr_val,
+        'raw_lower': lower_val,
+        'raw_upper': upper_val,
+        'raw_20ma': mid_val,
+        'raw_60ma': sma60_val
+    }
 
 
 def scrape_google_finance(symbol):
@@ -292,15 +341,31 @@ def fetch_stock_data(symbol, include_history=False):
                     result['industry'] = 'N/A'
                 
                 try:
-                    # Fetch 60 days of history for indicators
+                    # Fetching 3mo to ensure MA60 has enough data
                     hist = ticker.history(period="3mo")
-                    macd_str, kd_str = calculate_technicals(hist)
-                    result['macd'] = macd_str or "N/A"
-                    result['kd'] = kd_str or "N/A"
+                    techs = calculate_technicals(hist)
+                    if techs:
+                        result['macd'] = techs.get('macd', 'N/A')
+                        result['kd'] = techs.get('kd', 'N/A')
+                        result['rsi'] = techs.get('rsi', 'N/A')
+                        result['bollinger'] = techs.get('bollinger', 'N/A')
+                        result['ma'] = techs.get('ma', 'N/A')
+                        result['atr'] = techs.get('atr', 'N/A')
+                    else:
+                        result['macd'] = "N/A"
+                        result['kd'] = "N/A"
+                        result['rsi'] = "N/A"
+                        result['bollinger'] = "N/A"
+                        result['ma'] = "N/A"
+                        result['atr'] = "N/A"
                 except Exception as e:
                     print(f"History fetch failed for {symbol}: {e}")
                     result['macd'] = "N/A"
                     result['kd'] = "N/A"
+                    result['rsi'] = "N/A"
+                    result['bollinger'] = "N/A"
+                    result['ma'] = "N/A"
+                    result['atr'] = "N/A"
                 
                 # Cache if we successfully got some data
                 if result['pe'] != 'N/A' or result['macd'] != 'N/A':
@@ -356,7 +421,12 @@ def get_screened_stocks():
                     buy_price = cp * 0.9
                     target_price = cp * 1.2
                     
-                stop_loss = cp * 0.92  # 8% stop loss
+                # New stop loss logic using ATR (if available)
+                atr_val = data.get('atr', 'N/A')
+                if atr_val != 'N/A' and isinstance(atr_val, (int, float)):
+                    stop_loss = cp - (1.5 * atr_val)
+                else:
+                    stop_loss = cp * 0.92  # 8% stop loss fallback
                 
                 results.append({
                     "symbol": data['symbol'].replace('.TW', ''),
@@ -370,8 +440,11 @@ def get_screened_stocks():
                     "eps": data['eps'],
                     "roe": f"{data['roe']}%" if data['roe'] != 'N/A' else 'N/A',
                     "roa": f"{data['roa']}%" if data['roa'] != 'N/A' else 'N/A',
-                    "kd": data['kd'],
-                    "macd": data['macd'],
+                    "kd": data.get('kd', 'N/A'),
+                    "macd": data.get('macd', 'N/A'),
+                    "rsi": data.get('rsi', 'N/A'),
+                    "bollinger": data.get('bollinger', 'N/A'),
+                    "ma": data.get('ma', 'N/A'),
                     "trend": "向上" if data['changePercent'] > 0 else "盤整" if data['changePercent'] > -1 else "向下",
                     "reason": f"今日漲跌: {data['changePercent']}%"
                 })
