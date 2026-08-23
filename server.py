@@ -28,6 +28,7 @@ def get_twse_fundamentals():
     return TWSE_FUNDAMENTALS
 
 import pandas as pd
+import numpy as np
 import concurrent.futures
 import requests
 from bs4 import BeautifulSoup
@@ -150,8 +151,6 @@ def calculate_technicals(df):
     low_close = (df['Low'] - df['Close'].shift()).abs()
     
     # We must construct a DataFrame and use max(axis=1) safely, some older pandas versions don't like np.max over Series
-    import pandas as pd
-    import numpy as np
     ranges = pd.concat([high_low, high_close, low_close], axis=1)
     true_range = ranges.max(axis=1)
     atr = true_range.rolling(14).mean()
