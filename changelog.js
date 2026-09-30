@@ -1,5 +1,12 @@
 const changelogData = [
   {
+    version: "v47",
+    date: "2026-09-30",
+    title: "Apple 頂級設計規範 (HIG) 視覺修正",
+    details: "1. 取消內容卡片的毛玻璃特效，將背景模糊 (Glassmorphism) 專心保留給頂部控制列與彈出視窗，建立更專業的視覺層級。<br/>2. 導入等寬數字字體設定 (tabular-nums)，讓股價、EPS 等小數點完美對齊。<br/>3. 修正策略表格對齊方式，文字靠左、數據靠右，大幅提升閱讀效率。",
+    bugFixes: "無"
+  },
+  {
     version: "v46",
     date: "2026-08-23",
     title: "跨市場一頁式分區顯示上線",

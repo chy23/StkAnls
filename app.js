@@ -318,7 +318,7 @@ async function renderStockCards() {
   }
   
   const skeletonCard = `
-    <div class="glass-panel stock-card skeleton-card" style="padding: 1.5rem; display: flex; flex-direction: column;">
+    <div class="content-panel stock-card skeleton-card" style="padding: 1.5rem; display: flex; flex-direction: column;">
       <div class="skeleton skeleton-row w-50" style="height: 24px;"></div>
       <div class="skeleton skeleton-row w-75" style="margin-top: 1.5rem;"></div>
       <div class="skeleton skeleton-row" style="margin-top: 1rem;"></div>
@@ -409,7 +409,7 @@ async function renderStockCards() {
       const badgeHTML = isSweet ? '<div style="position: absolute; top: -12px; right: -12px; background: var(--success-color); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.4); z-index: 10;">🔥 達估值甜蜜點</div>' : '';
 
       html += `
-        <div class="glass-panel stock-card fade-in" style="position: relative; ${highlightStyle}">
+        <div class="content-panel stock-card fade-in" style="position: relative; ${highlightStyle}">
           ${badgeHTML}
           <div class="stock-header">
             <div>
@@ -2948,7 +2948,7 @@ const CATEGORY_MAP = {
     searchBtn.innerHTML = '<span class="loading" style="display:inline-block;">🔄</span> 載入中...';
     searchResultsSection.style.display = 'block';
     const skeletonCard = `
-      <div class="glass-panel stock-card skeleton-card" style="padding: 1.5rem; display: flex; flex-direction: column;">
+      <div class="content-panel stock-card skeleton-card" style="padding: 1.5rem; display: flex; flex-direction: column;">
         <div class="skeleton skeleton-row w-50" style="height: 24px;"></div>
         <div class="skeleton skeleton-row w-75" style="margin-top: 1.5rem;"></div>
         <div class="skeleton skeleton-row" style="margin-top: 1rem;"></div>
@@ -3009,7 +3009,7 @@ const CATEGORY_MAP = {
               const badgeHTML = isSweet ? '<div style="position: absolute; top: -12px; right: -12px; background: var(--success-color); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.4); z-index: 10;">🔥 達估值甜蜜點</div>' : '';
 
               const html = `
-                <div class="glass-panel stock-card fade-in" style="position: relative; ${highlightStyle}">
+                <div class="content-panel stock-card fade-in" style="position: relative; ${highlightStyle}">
                   ${badgeHTML}
                   <div class="stock-header">
                     <div>
@@ -3123,7 +3123,7 @@ const CATEGORY_MAP = {
           data.forEach(stock => {
             const linkURL = stock.symbol.match(/^\d+/) ? `https://tw.stock.yahoo.com/quote/${stock.symbol}` : `https://finance.yahoo.com/quote/${stock.symbol}`;
             html += `
-              <div class="glass-panel stock-card fade-in">
+              <div class="content-panel stock-card fade-in">
                 <div class="stock-header">
                   <div>
                     <div class="stock-symbol"><a href="${linkURL}" target="_blank" style="color: inherit; text-decoration: none;">${stock.symbol}</a></div>
@@ -3273,7 +3273,7 @@ async function loadIndexContributors() {
       }
 
       html += `
-        <div class="glass-panel stock-card fade-in" style="position: relative; ${highlightStyle}">
+        <div class="content-panel stock-card fade-in" style="position: relative; ${highlightStyle}">
           ${badgeHTML}
           <div class="stock-header">
             <div>

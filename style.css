@@ -404,3 +404,27 @@ table th:first-child {
 .skeleton-row.w-50 { width: 50%; }
 .skeleton-row.w-75 { width: 75%; }
 
+
+/* Solid Content Cards (No Blur) */
+.content-panel {
+  background: #1e293b; /* Solid dark color */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.content-panel:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Numeric Typography & Alignment */
+.data-value, .buy-price, td, th {
+  font-variant-numeric: tabular-nums;
+}
+table td:not(:first-child):not(:last-child),
+table th:not(:first-child):not(:last-child) {
+  text-align: right;
+}
