@@ -1,5 +1,12 @@
 const changelogData = [
   {
+    version: "v48",
+    date: "2026-09-30",
+    title: "Interface Design 高級感視覺重構",
+    details: "1. 建立三層邊框系統 (border-subtle / card-border / border-emphasis)，深色模式邊框從生硬的 0.1 不透明度精修為 0.05~0.12 漸進層級。<br/>2. 輸入框與下拉選單導入內嵌式 (inset) 設計語言，深色背景 + 極淡邊框 + 1px 藍色 focus ring。<br/>3. 按鈕去掉過粗邊框，改為透明底 + 極淡邊框的高級克制風格，配合 scale(0.97) 按壓回饋。<br/>4. 標題排版導入負字距 (letter-spacing: -0.03em) 與 font-smoothing 反鋸齒。<br/>5. 內容面板去除浮動 hover 動畫，改用靜態沉穩的結構感。",
+    bugFixes: "無"
+  },
+  {
     version: "v47",
     date: "2026-09-30",
     title: "Apple 頂級設計規範 (HIG) 視覺修正",

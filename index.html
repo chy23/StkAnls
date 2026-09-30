@@ -35,7 +35,7 @@
       });
     }
   </script>
-  <link rel="stylesheet" href="style.css?v=55">
+  <link rel="stylesheet" href="style.css?v=56">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -147,8 +147,8 @@
 
     <!-- Custom Search and Filter -->
     <div class="search-container sticky-bar fade-in" style="animation-delay: 0.18s; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
-      <button class="refresh-btn" id="refresh-btn" title="重新載入最新資料" style="background: rgba(16, 185, 129, 0.2); border: 1px solid var(--success-color); color: var(--success-color); padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">🔄 重新抓取最新資料</button>
-      <select id="category-filter" class="search-input" style="padding: 0.8rem; border-radius: 8px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.2);">
+      <button class="refresh-btn" id="refresh-btn" title="重新載入最新資料" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: var(--success-color);">🔄 重新抓取最新資料</button>
+      <select id="category-filter" class="control-input">
         <option value="">選擇台股類別...</option>
         <option value="半導體業">半導體業</option>
         <option value="電腦及週邊設備業">電腦及週邊設備業</option>
@@ -184,7 +184,7 @@
         <option value="運動休閒">運動休閒</option>
         <option value="居家生活">居家生活</option>
       </select>
-      <input type="text" id="stock-search" class="search-input" placeholder="輸入代碼如 TSLA, 2330" style="padding: 0.8rem; border-radius: 8px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.2); width: 200px;" />
+      <input type="text" id="stock-search" class="control-input" placeholder="輸入代碼如 TSLA, 2330" style="width: 200px;" />
       <button id="search-btn" class="refresh-btn">🔍 分析</button>
     </div>
 
@@ -364,8 +364,8 @@
     </div>
   </div>
 
-  <script src="changelog.js?v=55"></script>
-  <script src="app.js?v=55"></script>
+  <script src="changelog.js?v=56"></script>
+  <script src="app.js?v=56"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
